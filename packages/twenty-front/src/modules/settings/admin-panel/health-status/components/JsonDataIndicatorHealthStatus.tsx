@@ -1,8 +1,8 @@
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
-import { JsonTree } from '@/workflow/components/json-visualizer/components/JsonTree';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { Section } from 'twenty-ui';
+import { JsonTree, Section } from 'twenty-ui';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`
@@ -10,8 +10,8 @@ const StyledDetailsContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
   border-radius: ${({ theme }) => theme.border.radius.md};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  white-space: pre-wrap;
   font-size: ${({ theme }) => theme.font.size.sm};
+  overflow-x: auto;
 `;
 
 const StyledErrorMessage = styled.div`
@@ -21,6 +21,8 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const JsonDataIndicatorHealthStatus = () => {
+  const { t } = useLingui();
+
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
   const parsedDetails = indicatorHealth.details
@@ -41,7 +43,13 @@ export const JsonDataIndicatorHealthStatus = () => {
       )}
       {parsedDetails && (
         <StyledDetailsContainer>
-          <JsonTree value={parsedDetails} />
+          <JsonTree
+            value={parsedDetails}
+            emptyArrayLabel={t`Empty Array`}
+            emptyObjectLabel={t`Empty Object`}
+            arrowButtonCollapsedLabel={t`Expand`}
+            arrowButtonExpandedLabel={t`Collapse`}
+          />
         </StyledDetailsContainer>
       )}
     </Section>

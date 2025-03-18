@@ -1,20 +1,20 @@
-import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
-import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { AppPath } from '@/types/AppPath';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -81,7 +81,7 @@ export const RecordBoardCard = ({
   position?: 'first' | 'last';
 }) => {
   const navigate = useNavigateApp();
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const { recordId } = useContext(RecordBoardCardContext);
 
@@ -119,11 +119,9 @@ export const RecordBoardCard = ({
     ),
   );
 
-  const { openActionMenuDropdown } = useActionMenu(actionMenuId);
+  const { openDropdown } = useDropdownV2();
 
-  const recordIndexOpenRecordIn = useRecoilValue(
-    recordIndexOpenRecordInSelector,
-  );
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -132,7 +130,7 @@ export const RecordBoardCard = ({
       x: event.clientX,
       y: event.clientY,
     });
-    openActionMenuDropdown();
+    openDropdown(actionMenuDropdownId);
   };
 
   const handleCardClick = () => {
